@@ -1,2 +1,2 @@
-.Rdata
-.Rhistory
+*.RData
+*.Rhistory
