@@ -228,15 +228,15 @@ estBetaParams(mu, var)
 df.new <- data[-sample(1:nrow(data), 1500), ]
 Genre.mean <- mean(df.new$Genre)
 t.test(data$Genre, mu=Genre.mean)
-
+  
 
 ###--- Revenu
 
 #Determination de la distribution pour Revenu
 descdist(data$Revenu, discrete=FALSE, boot=500)
 
-#Estimation pontuelle du revenu avec le maximum de vraisemblance
-fitdistr(data$Revenu, "gamma")
+#Estimation ponctuelle du revenu avec le maximum de vraisemblance
+eqgamma(data$Revenu)
 
 #Intervalle de confiance et test d'hypothèse pour revenu
 df.new <- data[-sample(1:nrow(data), 1500), ]
@@ -249,8 +249,8 @@ t.test(data$Revenu, mu=Revenu.mean)
 #Determination de la distribution pour nombre de votes
 descdist(votes, discrete=FALSE, boot=500)
 
-#Estimation pontuelle du nombre de votes avec le maximum de vraisemblance
-fitdistr(data$Votes, "gamma")
+#Estimation ponctuelle du nombre de votes avec le maximum de vraisemblance
+eqgamma(data$Votes)
 
 #Intervalle de confiance et test d'hypothèse pour revenu
 df.new <- data[-sample(1:nrow(data), 1500), ]
