@@ -1,33 +1,22 @@
-# Importing packages
+ {"_execution_state":"idle"}
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## Importing packages
 library(ggplot2)
 library(reshape2)
 library(fitdistrplus)
 library(logspline)
 library(EnvStats)
 library(MASS)
-library(BBEST)
 
 list.files(path = "../input")
+
 
 #Lire le fichier
 data <- read.csv("../input/donnees_a_analyser.csv")
 
-#Grouper les differents genres
-groupe1 <- subset(data, Genre == 1 | Genre == 2 | Genre == 9 | Genre == 15 | Genre == 16,
-                  select=c(Annee, Revenu, Genre))
-groupe2 <- subset(data, Genre == 6 | Genre == 7 | Genre == 10 | Genre == 11 | Genre == 13,
-                  select=c(Annee, Revenu, Genre))
-groupe3 <- subset(data, Genre == 3 | Genre == 5 | Genre == 8,
-                  select=c(Annee, Revenu, Genre))
-groupe4 <- subset(data, Genre == 12 | Genre == 14 | Genre == 4,
-                  select=c(Annee, Revenu, Genre))
 
-##############################################
-#####-----STATISTIQUE DESCRIPTIVE------#######
-##############################################
-
-
-###--- Heatmap
+#A GARDER!!!!!!!!!!!!!!!!!!!11
+#Pour faire le heatmap
 mydata <- data[, c(1,2,3,4,5,6)]
 head(mydata)
 cormat <- round(cor(mydata),2)
@@ -65,15 +54,20 @@ ggheatmap +
                                title.position = "top", title.hjust = 0.5))
 
 
-###--- Relation entre le nombre de votes et le revenu---###
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Grouper les différents genres
+groupe1 <- subset(data, Genre == 1 | Genre == 2 | Genre == 9 | Genre == 15 | Genre == 16,
+                  select=c(Annee, Revenu, Genre))
+groupe2 <- subset(data, Genre == 6 | Genre == 7 | Genre == 10 | Genre == 11 | Genre == 13,
+                  select=c(Annee, Revenu, Genre))
+groupe3 <- subset(data, Genre == 3 | Genre == 5 | Genre == 8,
+                  select=c(Annee, Revenu, Genre))
+groupe4 <- subset(data, Genre == 12 | Genre == 14 | Genre == 4,
+                  select=c(Annee, Revenu, Genre))
 
-plot(x=data$Votes, y=data$Revenu, 
-     xlab = "Votes", ylab = "Revenu", 
-     main = "Relation entre le nombre de votes et le revenu")
 
-
-###--- Popularite d'un genre par rapport à l'annee de sortie---###
-
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Question 2: Quel(s) genre(s) de films est le plus populaire au fil des années (par décennies)?
 hist(groupe1$Annee, main = "Répartition des années pour le groupe 1 de genres",
      xlab = "Années", ylab = "Fréquence")
 hist(groupe2$Annee, main = "Répartition des années pour le groupe 2 de genres",
@@ -84,7 +78,8 @@ hist(groupe4$Annee, main = "Répartition des années pour le groupe 4 de genres",
      xlab = "Années", ylab = "Fréquence")
 
 
-###--- Relation entre le genre du film et le revenu perçu
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Question 3: Y-a-t-il une corrélation entre le genre de film et le revenu perçu?
 
 boxplot(groupe1$Revenu, groupe2$Revenu, groupe3$Revenu, groupe4$Revenu, 
         main = "Boites à moustache du revenu pour chaque groupe de genre",
@@ -96,61 +91,46 @@ boxplot(groupe1$Revenu, groupe2$Revenu, groupe3$Revenu, groupe4$Revenu,
         names = c("Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4"))
 
 
-###--- Relation entre le score du film et le Metascore
-plot(data$Score, data$Metascore, 
-     xlab = "Score", ylab = "Metascore", 
-     main = "Corrélation entre le score et le Metascore")
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Question 4: Est-ce que le score a une corrélation avec le Metascore?
+plot(data$Score, data$Metascore, xlab = "Score", ylab = "Metascore", main = "Corrélation entre le score et le Metascore")
 abline(lm(data$Metascore~data$Score), col="red")
 reg3 <- lm(data$Metascore~data$Score, data)
 summary(reg3)
 
 
-################################################
-#####-----ESTIMATION DES PARAMETRES------#######
-################################################
-
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #Histogrammes pour déterminer la distribution
-  #Annee
 hist(data$Annee, 
      freq = FALSE, 
      main = "Histogramme des années", 
      xlab = "Années", ylab = "Densité")
 lines(density(data$Annee), col="red", lwd=2)
-  #Score
 hist(data$Score, 
      freq = FALSE, 
      main = "Histogramme des scores", 
      xlab = "Score", ylab = "Densité")
 lines(density(data$Score), col="red", lwd=2)
-  #Metascore
 hist(data$Metascore, 
      freq = FALSE, 
      main = "Histogramme des Metascores", 
      xlab = "Metascore", ylab = "Densité")
 lines(density(data$Metascore), col="red", lwd=2)
-  #Revenu
-hist(data$Revenu, 
-     xlab = "Revenu", ylab = "Frequence", main = "Histogramme du revenu")
-lines(density(data$Revenu), col="red", lwd=2)
-  #Nombre de votes
-hist(data$Votes, 
-     xlab = "Nombre de votes", ylab = "FrÃ©quence", main = "Histogramme du nombre de votes", 
-     freq = FALSE)
-lines(density(data$Votes), col="red", lwd=2)
 
-#Shapiro Wilk pour la normalite
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Shapiro Wilk pour la normalité
 shapiro.test(data$Annee)
 shapiro.test(data$Score)
 shapiro.test(data$Metascore)
-shapiro.test(data$Revenu)
-shapiro.test(data$Votes)
 
-
-###--- Annee
 
 #Determination de la distribution pour Annee
 descdist(data$Annee, discrete = FALSE)
 
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #Test distribution pour Annee
 fit.gamma <- fitdist(data$Annee, "gamma")
 plot(fit.gamma)
@@ -159,22 +139,43 @@ plot(fit.exp)
 fit.gamma$aic
 fit.exp$aic
 
-#Estimation des parametres de Annee, forme et echelle
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Estimation des paramètres de Annee, forme et echelle
 fitdistr(data$Annee, "gamma")
 estimAnnee <- eqgamma(data$Annee, ci = TRUE)
 estimAnnee$interval
 
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #Test d'hypothese pour la moyenne de Annee
 df.new <- data[-sample(1:nrow(data), 1500), ]
 annee.mean <- mean(df.new$Annee)
 t.test(data$Annee, mu=annee.mean)
 
 
-###--- Score
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Determination de la distribution pour Score
+descdist(data$Score, discrete = FALSE)
 
-#Estimation des parametres de Score
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Test distribution pour score
+fit.lnorm <- fitdist(data$Score, "lnorm")
+plot(fit.lnorm)
+fit.logis <- fitdist(data$Score, "logis")
+plot(fit.logis)
+fit.norm <- fitdist(data$Score, "norm")
+plot(fit.norm)
+fit.lnorm$aic
+fit.logis$aic
+fit.norm$aic
+
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Estimation des paramètres de Score
 fitdistr(data$Score, "normal")
-
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #Intervalle de confiance pour score
 Deg = sd(data$Metascore)
 qt(1-0.025, (length(data$Score))-1)
@@ -183,20 +184,21 @@ Ulim = mean(data$Score) + qt(1-0.025, (length(data$Score))-1) * Deg / sqrt(lengt
 Llim
 Ulim
 
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #Test d'hypothese pour la moyenne de Score
 score.mean <- mean(df.new$Score)
 t.test(data$Score, mu=score.mean)
 
 
-###--- Metascore
-
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #QQ plots pour les variables ayant un W de shapiro assez grand
 qqnorm(data$Metascore, main = "Q-Q Plot des Metascores")
 qqline(data$Metascore)
-
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #Estimation pontuelle du metascore avec le maximum de vraisemblance
 fitdistr(data$Metascore, "normal")
-
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #Intervalle de confiance pour metascore
 S = sd(data$Metascore)
 qt(1-0.025, (length(data$Metascore))-1)
@@ -205,86 +207,8 @@ U = mean(data$Metascore) + qt(1-0.025, (length(data$Metascore))-1) * S / sqrt(le
 L
 U
 
+
+#A GARDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #Test d'hypothese pour la moyenne de Metascore
 metascore.mean <- mean(df.new$Metascore)
 t.test(data$Metascore, mu=metascore.mean)
-
-
-###--- Genre
-
-#Determination de la distribution pour Genre
-descdist(data$Genre, discrete=FALSE, boot=500)
-
-#Estimation pontuelle du genre avec la méthode des moments
-estBetaParams <- function(mu, var) {
-  alpha <- ((1 - mu) / var - 1 / mu) * mu ^ 2
-  beta <- alpha * (1 / mu - 1)
-  return(params = list(alpha = alpha, beta = beta))
-}
-mu <- mean(data$Genre)
-var <- var(data$Genre)
-estBetaParams(mu, var)
-
-#Intervalle de confiance et test d'hypothèse pour Genre
-df.new <- data[-sample(1:nrow(data), 1500), ]
-Genre.mean <- mean(df.new$Genre)
-t.test(data$Genre, mu=Genre.mean)
-
-
-###--- Revenu
-
-#Determination de la distribution pour Revenu
-descdist(data$Revenu, discrete=FALSE, boot=500)
-
-#Estimation pontuelle du revenu avec le maximum de vraisemblance
-fitdistr(data$Revenu, "gamma")
-
-#Intervalle de confiance et test d'hypothèse pour revenu
-df.new <- data[-sample(1:nrow(data), 1500), ]
-Revenu.mean <- mean(df.new$Revenu)
-t.test(data$Revenu, mu=Revenu.mean)
-
-
-###--- Nombre de votes
-
-#Determination de la distribution pour nombre de votes
-descdist(votes, discrete=FALSE, boot=500)
-
-#Estimation pontuelle du nombre de votes avec le maximum de vraisemblance
-fitdistr(data$Votes, "gamma")
-
-#Intervalle de confiance et test d'hypothèse pour revenu
-df.new <- data[-sample(1:nrow(data), 1500), ]
-Votes.mean <- mean(df.new$Vote)
-t.test(data$Votes, mu=Votes.mean)
-
-
-#################################
-#####-----REGRESSION------#######
-#################################
-#Relation entre le nombre de votes et le revenu
-plot(x,y, xlab="Votes", ylab="Revenu", main="Relation entre le nombre de votes et le revenu")
-abline(lm(y~x), col="red")
-
-#Diagramme de residus du nombre de votes
-plot.lm = lm(y ~ x)
-plot.res = resid(plot.lm)
-plot(x,plot.res,ylab="Résidus standardisés",xlab="Votes",main="Résidus") 
-abline(0, 0)                  
-
-#Relation entre le score et le metascore
-x = donneesFinales$Score
-y = donneesFinales$Metascore
-
-plot(x,y, xlab="Score", ylab="Metascore", main="Relation entre le metascore et le score")
-abline(lm(y~x), col="red")
-
-
-
-
-
-
-
-
-
-
