@@ -5,7 +5,6 @@ library(fitdistrplus)
 library(logspline)
 library(EnvStats)
 library(MASS)
-library(BBEST)
 
 list.files(path = "../input")
 
