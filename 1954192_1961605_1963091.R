@@ -5,6 +5,7 @@ library(fitdistrplus)
 library(logspline)
 library(EnvStats)
 library(MASS)
+library(BBEST)
 
 list.files(path = "../input")
 
@@ -214,15 +215,48 @@ t.test(data$Metascore, mu=metascore.mean)
 #Determination de la distribution pour Genre
 descdist(data$Genre, discrete=FALSE, boot=500)
 
+#Estimation pontuelle du genre avec la méthode des moments
+estBetaParams <- function(mu, var) {
+  alpha <- ((1 - mu) / var - 1 / mu) * mu ^ 2
+  beta <- alpha * (1 / mu - 1)
+  return(params = list(alpha = alpha, beta = beta))
+}
+mu <- mean(data$Genre)
+var <- var(data$Genre)
+estBetaParams(mu, var)
+
+#Intervalle de confiance et test d'hypothèse pour Genre
+df.new <- data[-sample(1:nrow(data), 1500), ]
+Genre.mean <- mean(df.new$Genre)
+t.test(data$Genre, mu=Genre.mean)
+
+
 ###--- Revenu
 
 #Determination de la distribution pour Revenu
 descdist(data$Revenu, discrete=FALSE, boot=500)
 
+#Estimation pontuelle du revenu avec le maximum de vraisemblance
+fitdistr(data$Revenu, "gamma")
+
+#Intervalle de confiance et test d'hypothèse pour revenu
+df.new <- data[-sample(1:nrow(data), 1500), ]
+Revenu.mean <- mean(df.new$Revenu)
+t.test(data$Revenu, mu=Revenu.mean)
+
+
 ###--- Nombre de votes
 
 #Determination de la distribution pour nombre de votes
 descdist(votes, discrete=FALSE, boot=500)
+
+#Estimation pontuelle du nombre de votes avec le maximum de vraisemblance
+fitdistr(data$Votes, "gamma")
+
+#Intervalle de confiance et test d'hypothèse pour revenu
+df.new <- data[-sample(1:nrow(data), 1500), ]
+Votes.mean <- mean(df.new$Vote)
+t.test(data$Votes, mu=Votes.mean)
 
 
 #################################
