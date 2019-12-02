@@ -1,3 +1,4 @@
+# %% [code] {"_execution_state":"idle"}
 # Importing packages
 library(ggplot2)
 library(reshape2)
@@ -6,10 +7,9 @@ library(logspline)
 library(EnvStats)
 library(MASS)
 
-list.files(path = "../input")
 
 #Lire le fichier
-data <- read.csv("../input/donnees_a_analyser.csv")
+data <- read.csv("1954192_1961605_1963091.csv", header = TRUE)
 
 #Grouper les differents genres
 groupe1 <- subset(data, Genre == 1 | Genre == 2 | Genre == 9 | Genre == 15 | Genre == 16,
@@ -109,29 +109,29 @@ summary(reg3)
 ################################################
 
 #Histogrammes pour déterminer la distribution
-  #Annee
+#Annee
 hist(data$Annee, 
      freq = FALSE, 
      main = "Histogramme des années", 
      xlab = "Années", ylab = "Densité")
 lines(density(data$Annee), col="red", lwd=2)
-  #Score
+#Score
 hist(data$Score, 
      freq = FALSE, 
      main = "Histogramme des scores", 
      xlab = "Score", ylab = "Densité")
 lines(density(data$Score), col="red", lwd=2)
-  #Metascore
+#Metascore
 hist(data$Metascore, 
      freq = FALSE, 
      main = "Histogramme des Metascores", 
      xlab = "Metascore", ylab = "Densité")
 lines(density(data$Metascore), col="red", lwd=2)
-  #Revenu
+#Revenu
 hist(data$Revenu, 
      xlab = "Revenu", ylab = "Frequence", main = "Histogramme du revenu")
 lines(density(data$Revenu), col="red", lwd=2)
-  #Nombre de votes
+#Nombre de votes
 hist(data$Votes, 
      xlab = "Nombre de votes", ylab = "FrÃ©quence", main = "Histogramme du nombre de votes", 
      freq = FALSE)
@@ -228,8 +228,8 @@ estBetaParams(mu, var)
 df.new <- data[-sample(1:nrow(data), 1500), ]
 Genre.mean <- mean(df.new$Genre)
 t.test(data$Genre, mu=Genre.mean)
-  
 
+# %% [code]
 ###--- Revenu
 
 #Determination de la distribution pour Revenu
@@ -243,11 +243,11 @@ df.new <- data[-sample(1:nrow(data), 1500), ]
 Revenu.mean <- mean(df.new$Revenu)
 t.test(data$Revenu, mu=Revenu.mean)
 
-
+# %% [code]
 ###--- Nombre de votes
 
 #Determination de la distribution pour nombre de votes
-descdist(votes, discrete=FALSE, boot=500)
+descdist(data$Votes, discrete=FALSE, boot=500)
 
 #Estimation ponctuelle du nombre de votes avec le maximum de vraisemblance
 eqgamma(data$Votes)
@@ -257,33 +257,23 @@ df.new <- data[-sample(1:nrow(data), 1500), ]
 Votes.mean <- mean(df.new$Vote)
 t.test(data$Votes, mu=Votes.mean)
 
-
+# %% [code]
 #################################
 #####-----REGRESSION------#######
 #################################
 #Relation entre le nombre de votes et le revenu
-plot(x,y, xlab="Votes", ylab="Revenu", main="Relation entre le nombre de votes et le revenu")
-abline(lm(y~x), col="red")
+plot(data$Votes,data$Revenu, xlab="Votes", ylab="Revenu", main="Relation entre le nombre de votes et le revenu")
+abline(lm(data$Revenu ~ data$Votes), col="red")
 
 #Diagramme de residus du nombre de votes
-plot.lm = lm(y ~ x)
+plot.lm = lm(data$Revenu ~ data$Votes)
 plot.res = resid(plot.lm)
-plot(x,plot.res,ylab="Résidus standardisés",xlab="Votes",main="Résidus") 
+plot(data$Votes,plot.res,ylab="Résidus standardisés",xlab="Votes",main="Résidus") 
 abline(0, 0)                  
 
 #Relation entre le score et le metascore
-x = donneesFinales$Score
-y = donneesFinales$Metascore
+x = data$Score
+y = data$Metascore
 
 plot(x,y, xlab="Score", ylab="Metascore", main="Relation entre le metascore et le score")
 abline(lm(y~x), col="red")
-
-
-
-
-
-
-
-
-
-
